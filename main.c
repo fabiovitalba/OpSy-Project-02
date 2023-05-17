@@ -1,0 +1,145 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include "jobs.h"
+#include "filereader.h"
+
+#define FILENAME "jobs.txt"
+#define N_THREADS 3
+
+/**
+ * Struct defining the parameters passed to a thread composed by:
+ * the id of the thread (the integer index),
+ * the pointer to the file from which jobs are fetched,
+ * a pointer to the mutex used to synchronize the threads.
+ */
+struct thread_params {
+    // index of the thread
+    int thread_id;
+    // pointer to the file from which jobs should be read
+    FILE *jobs_file;
+    // pointer to the mutex used to synchronize the threads
+    pthread_mutex_t *mutex;
+};
+
+/**
+ * Reads the next job from the file and outputs both the job type and its parameters.
+ * @param params: pointer to the struct thread_params
+ * @param job_type: pointer to a single character where the method stores
+ * the type of job that needs to be performed. This will either be 's', 'm', 'f' or 'p'
+ * (if a valid job is found), 0 if there are no more jobs, and -1 if an
+ * invalid job is read from the file
+ * @return a pointer to a string with the parameters of the job,
+ * e.g., "3*4" for an 'm' job. This is dynamically
+ * allocated and must be freed by the user when not needed anymore
+ */
+char* get_next_job(struct thread_params *params, char* job_type);
+
+/**
+ * Runs a job depending on the job_type in input and then calls another function
+ * that actually runs the job.
+ * @param params: pointer to the struct thread_params
+ * @param job_type: character indicating the type of job
+ * @param job_parameters: a string with the parameters of the job, taken from the jobs file
+ */
+void run_job(struct thread_params *params, char job_type, char *job_parameters);
+
+/**
+ * The following set of functions parse the parameters of the job and actually run the job
+ * @param params: pointer to the struct thread_params
+ * @param job_parameters: the string with the parameters for the job read from the jobs file
+ */
+void run_sleep(struct thread_params *params, char *job_parameters);
+
+void run_math(struct thread_params *params, char *job_parameters);
+
+void run_factorization(struct thread_params *params, char *job_parameters);
+
+void run_prime(struct thread_params *params, char *job_parameters);
+
+/**
+ * This is the thread function. The aim of a thread is to read
+ * from the file calling get_next_job() to obtain:
+ * i) the job to be performed, and
+ * ii) its relative parameters.
+ * After reading the file, the thread runs the job, and prints the result.
+ * The thread should use a mutex to synchronize
+ * concurrent access both to the file and to the output (to avoid multiple threads
+ * printing together using printf).
+ * A thread terminates its infinite loop when no more jobs are found.
+ * @param parameters: pointer to the struct thread_params
+ * @return NULL
+ */
+void *thread(void *parameters);
+
+int main() {
+    // STUDENT CODE GOES HERE
+    return 0;
+}
+
+void *thread(void *parameters) {
+    // STUDENT CODE GOES HERE
+    return NULL;
+}
+
+char* get_next_job(struct thread_params *params, char* job_type) {
+    // get a line from the file
+    char *job_parameters;
+    char *line = read_line(params->jobs_file);
+    // return if no more line
+    if (line == NULL) {
+        *job_type = 0;
+        return NULL;
+    }
+    // pick the first character which indicates the type of job
+    *job_type = line[0];
+    free(line);
+    // read another line with job parameters
+    job_parameters = read_line(params->jobs_file);
+    switch (*job_type) {
+        case 's':
+        case 'm':
+        case 'f':
+        case 'p':
+            return job_parameters;
+        default:
+            *job_type = -1;
+            free(job_parameters);
+            return NULL;
+    }
+}
+
+void run_job(struct thread_params *params, char job_type, char *job_parameters) {
+    switch (job_type) {
+        case 's':
+            run_sleep(params, job_parameters);
+            break;
+        case 'm':
+            run_math(params, job_parameters);
+            break;
+        case 'f':
+            run_factorization(params, job_parameters);
+            break;
+        case 'p':
+            run_prime(params, job_parameters);
+            break;
+        default:
+            break;
+    }
+}
+
+void run_sleep(struct thread_params *params, char *job_parameters) {
+    // STUDENT CODE GOES HERE
+}
+
+void run_math(struct thread_params *params, char *job_parameters) {
+    // STUDENT CODE GOES HERE
+}
+
+void run_factorization(struct thread_params *params, char *job_parameters) {
+    // STUDENT CODE GOES HERE
+}
+
+void run_prime(struct thread_params *params, char *job_parameters) {
+    // STUDENT CODE GOES HERE
+}
