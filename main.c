@@ -6,7 +6,7 @@
 
 #define FILENAME "jobs.txt"
 #define N_THREADS 3
-#define VERBOSE 1
+#define VERBOSE 0
 
 /**
  * Struct defining the parameters passed to a thread composed by:
@@ -87,7 +87,6 @@ int main() {
         params[i]->mutex = &global_mutex;
         params[i]->thread_id = i + 1;
 
-        threads[i] = malloc(sizeof(pthread_t));
         if (VERBOSE) {
             printf("launching thread %d\n",params[i]->thread_id);
         }
@@ -104,6 +103,7 @@ int main() {
 
     free(params);
     pthread_mutex_destroy(&global_mutex);
+    close_file(file);
     if (VERBOSE) {
         printf("program completed.\n");
     }
