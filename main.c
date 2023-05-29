@@ -125,6 +125,16 @@ void *thread(void *parameters) {
         if (job_type > 0) {
             run_job(params,job_type,job_params);
             free(job_params);
+        } else {
+            if (job_type == 0) {
+                pthread_mutex_lock(params->mutex);
+                printf("Thread %d: No further jobs to be processed. Terminating.\n",params->thread_id);
+                pthread_mutex_unlock(params->mutex);
+            } else {
+                pthread_mutex_lock(params->mutex);
+                printf("Thread %d: Error getting next job.\n",params->thread_id);
+                pthread_mutex_unlock(params->mutex);
+            }
         }
     }
     return NULL;
@@ -171,16 +181,12 @@ void run_job(struct thread_params *params, char job_type, char *job_parameters) 
         case 'p':
             run_prime(params, job_parameters);
             break;
-        default:
-            break;
     }
 }
 
 void run_sleep(struct thread_params *params, char *job_parameters) {
     int seconds;
-    sscanf(job_parameters, "%d", &seconds);
-
-    if (seconds > 0) {
+    if (sscanf(job_parameters, "%d", &seconds) == 1) {
         pthread_mutex_lock(params->mutex);
         printf("Thread %d: Running sleep(%d)\n",params->thread_id,seconds);
         pthread_mutex_unlock(params->mutex);
@@ -200,25 +206,25 @@ void run_sleep(struct thread_params *params, char *job_parameters) {
 void run_math(struct thread_params *params, char *job_parameters) {
     float operand_a, operand_b;
     char operation;
-    sscanf(job_parameters, "%f%c%f", &operand_a, &operation, &operand_b);
     int operation_valid = 0;
-
-    switch(operation) {
-        case '+':
-        case '-':
-        case '*':
-        case '/': {
-            if ((operand_a != 0) || (operand_b != 0)) {
+    if (sscanf(job_parameters, "%f%c%f", &operand_a, &operation, &operand_b) == 3) {
+        switch(operation) {
+            case '+':
+            case '-':
+            case '*':
+            case '/': {
+                operation_valid = 1;
                 pthread_mutex_lock(params->mutex);
+
                 printf("Thread %d: Running math(%f %c %f)\n",params->thread_id,operand_a,operation,operand_b);
                 pthread_mutex_unlock(params->mutex);
                 float result = job_math(operand_a,operand_b,operation);
-                operation_valid = 1;
+                
                 pthread_mutex_lock(params->mutex);
                 printf("Thread %d: Job terminated. Result: %f\n",params->thread_id,result);
                 pthread_mutex_unlock(params->mutex);
+                break;
             }
-            break;
         }
     }
 
@@ -231,8 +237,7 @@ void run_math(struct thread_params *params, char *job_parameters) {
 
 void run_factorization(struct thread_params *params, char *job_parameters) {
     int number, size;
-    sscanf(job_parameters,"%d",&number);
-    if (number > 0) {
+    if (sscanf(job_parameters,"%d",&number) == 1) {
         pthread_mutex_lock(params->mutex);
         printf("Thread %d: Running factorization(%d)\n",params->thread_id,number);
         pthread_mutex_unlock(params->mutex);
@@ -254,8 +259,7 @@ void run_factorization(struct thread_params *params, char *job_parameters) {
 
 void run_prime(struct thread_params *params, char *job_parameters) {
     int number;
-    sscanf(job_parameters,"%d",&number);
-    if (number > 0) {
+    if (sscanf(job_parameters,"%d",&number) == 1) {
         pthread_mutex_lock(params->mutex);
         printf("Thread %d: Running prime(%d)\n",params->thread_id,number);
         pthread_mutex_unlock(params->mutex);
