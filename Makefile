@@ -1,2 +1,2 @@
 all:
-	gcc -Wall -o main filereader.c jobs.c main.c
+	clang -Wall -o main filereader.c jobs.c main.c

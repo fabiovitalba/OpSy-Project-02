@@ -1,4 +1,5 @@
 #include "filereader.h"
+#include <stdlib.h>
 
 FILE *open_file(char* filename) {
     return fopen(filename, "r");

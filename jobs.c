@@ -63,8 +63,8 @@ int *job_factorization(int number, int *size) {
     if (number % factor == 0) {
       // if there is no more space available, resize the array
       if (*size == array_size) {
-	array_size += SIZE_INCREASE;
-	factors = (int *) realloc(factors, sizeof(int) * array_size);
+        array_size += SIZE_INCREASE;
+        factors = (int *) realloc(factors, sizeof(int) * array_size);
       }
       // add the factor to the list of prime factors
       factors[*size] = factor;
