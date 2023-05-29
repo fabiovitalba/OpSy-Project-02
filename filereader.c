@@ -7,10 +7,12 @@ FILE *open_file(char* filename) {
 char* read_line(FILE *file) {
     char *line = NULL;
     size_t len = 0;
-    if (getline(&line, &len, file) == -1)
-        return NULL;
+    if (getline(&line, &len, file) == -1) {
+      free(line);      
+      return NULL;
+    }
     else
-        return line;
+      return line;
 }
 
 void close_file(FILE *file) {
