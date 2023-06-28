@@ -74,7 +74,7 @@ void run_prime(struct thread_params *params, char *job_parameters);
 void *thread(void *parameters);
 
 int main() {
-    FILE *file = open_file("jobs.txt");
+    FILE *file = open_file(FILENAME);
     pthread_mutex_t global_mutex;
     pthread_mutex_init(&global_mutex, NULL);
 
